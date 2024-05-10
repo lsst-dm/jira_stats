@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
 from safir.dependencies.logger import logger_dependency
 from safir.metadata import get_metadata
 from structlog.stdlib import BoundLogger
@@ -11,6 +12,14 @@ from ..config import config
 from ..models import Index
 
 __all__ = ["get_index", "external_router"]
+
+
+class ReviewsResponseModel(BaseModel):
+    """Response model for the greeting endpoint."""
+
+    reviews: dict = Field(..., title="Tickets per reviewer")
+    review_counts: dict = Field(..., title="Number of reviews per reviewer")
+
 
 external_router = APIRouter()
 """FastAPI router for all external handlers."""
@@ -50,3 +59,20 @@ async def get_index(
         application_name=config.name,
     )
     return Index(metadata=metadata)
+
+
+@external_router.get(
+    "/reviews/pipelines",
+    summary="Return last 60 days of pipelines reviews",
+    response_model=ReviewsResponseModel,
+)
+async def get_pipelines_reviews() -> ReviewsResponseModel:
+    """GET ``/jira_stats/reviews/pipelines``."""
+    return ReviewsResponseModel(
+        reviews={
+            "Me": "DM-XXXXX",
+        },
+        review_counts={
+            "Me": 1,
+        },
+    )
