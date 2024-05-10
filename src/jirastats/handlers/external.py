@@ -67,7 +67,10 @@ async def get_index(
     response_model=ReviewsResponseModel,
 )
 async def get_pipelines_reviews() -> ReviewsResponseModel:
-    """GET ``/jira_stats/reviews/pipelines``."""
+    """GET ``/jira_stats/reviews/pipelines``.
+
+    Just returns a example response for now.
+    """
     return ReviewsResponseModel(
         reviews={
             "Me": "DM-XXXXX",
